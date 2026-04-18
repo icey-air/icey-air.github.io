@@ -53,3 +53,11 @@ pygmentsUseClasses = true
 [services]
   [services.googleAnalytics]
    
+
+  [outputs]
+      home = ["html","json"]
+
+  [outputFormats.json]
+    mediaType = "application/json"
+    baseName = "index"
+    isPlainText = false
