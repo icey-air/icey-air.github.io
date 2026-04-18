@@ -1,0 +1,55 @@
+baseURL = "https://icey-air.github.io"
+languageCode = "zh-cn"
+title = "Icye's blog"
+theme = "github-style"
+pygmentsCodeFences = true
+pygmentsUseClasses = true
+
+[params]
+  author = "icey"
+  description = "A blog"
+  github = "icey-air"
+  facebook = ""
+  twitter = ""
+  linkedin = ""
+  instagram = ""
+  tumblr = ""
+  email = "1693308520@qq.com"
+  url = ""
+  keywords = "blog, google analytics"
+  rss = true
+  lastmod = true
+  favicon = "/images/github-mark.png"
+  avatar = "/images/head.png"
+  headerIcon = "/images/head.png"
+  location = "China"
+  userStatusEmoji = ""
+  enableGitalk = true
+  enableSearch = true
+
+  [params.gitalk]
+    clientID = "Your client ID" # Your client ID
+    clientSecret = "Your client secret" # Your client secret
+    repo = "icey-air.github.io" # 您的博客的github地址Repository name，例如：xxxx.github.io
+    owner = "icey-air" # 您的GitHub ID
+    admin = "icey-air" # 您的GitHub ID
+    id = "location.pathname" # 文章页面的链接地址就是ID
+    labels = "gitalk" # Github issue labels. If you used to use Gitment, you can change it
+    perPage = 15 # Pagination size, with maximum 100.
+    pagerDirection = "last" # Comment sorting direction, available values are 'last' and 'first'.
+    createIssueManually = true # 设置为true，如果是管理员登录，会自动创建issue，如果是false，需要管理员手动添加第一个评论(issue)
+    distractionFreeMode = false # Enable hot key (cmd|ctrl + enter) submit comment.
+    proxy = "https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token" # 可以自行添加反向代理
+  [[params.links]]
+    title = "Link"
+    href = "https://github.com/icey-air"
+  [[params.links]]
+    title = "Link2"
+    href = "https://icey-air.github.io"
+
+[frontmatter]
+  lastmod = ["lastmod", ":fileModTime", ":default"]
+
+[services]
+  [services.googleAnalytics]
+   
