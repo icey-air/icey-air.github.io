@@ -2,35 +2,37 @@
 title: "HAL库定时器初始化逻辑"
 description: "关于HAL库时钟初始化解析"
 date: 2026-08-25T10:01:18+08:00
-draft: False
+draft: false
 tags: [STM32]
 ---
 本文内容基于STM32CubeMX+Keil5的HAL库环境 
 ## STM32时钟树逻辑
 - 外部时钟源开启在SystemCore的RCC，若是晶振选择`Crystal/Ceramic Resonator`
-- LSI除了要选择`Crystal/Ceramic Resonator`之外还需在`RTC`里使能RTC![[Pasted image 20260825093819.png]]
-- ![[Pasted image 20260825093751.png]]
+- LSI除了要选择`Crystal/Ceramic Resonator`之外还需在`RTC`里使能RTC
+![RCC 时钟源与 RTC 配置](/images/stm32_hal_timer/rcc-lsi-rtc-config.png)
+![STM32 时钟树](/images/stm32_hal_timer/clock-tree.png)
 - CubeMX在上方Clock Configuration可以看到时钟树
 - 选择HSE/HSI[^HSE/HSI]时钟源，可进行PLL锁相环调频,得到SYSCLK，再经过AHP Prescaler[^Prescaler]分频得到AHB总线时钟HCLK，最后为各个外设配置时钟。在CubeMX我们一般只需选择需要的时钟源，填写HSE频率,填写所需HCLK频率即可
 - 若有RTC功能,可选择LSE/LSI/HSE做RTC时钟源
-	![[Pasted image 20260825094202.png]]
+![RTC 时钟源选择](/images/stm32_hal_timer/rtc-clock-source.png)
 
 ## 配置定时器
-- STM32F1的定时器分类，根据所需功能选择定时器种类![[Pasted image 20260825094520.png]]
+- STM32F1的定时器分类，根据所需功能选择定时器种类
+![STM32F1 定时器分类](/images/stm32_hal_timer/timer-classification.png)
 - 
 ### 配置基本定时器
 - 下面以1ms定时中断为例配置一个基本定时器
 - 这里选择TIM6，勾选Activated
 - 由于有中断需求，在NVIC Settings[^NVIC]勾选Enable使能中断
-- ![[Pasted image 20260825094902.png]]
+![TIM6 激活与 NVIC 中断使能](/images/stm32_hal_timer/tim6-nvic-config.png)
 - 配置定时器定时时间
 - 主要在于PSC和auto-reload preload(ARR)，即预分频器值和自动重载值
-- ![[Pasted image 20260825103216.png]]
-- ![[Pasted image 20260825100933.png]]
+![定时器 PSC 与 ARR 配置](/images/stm32_hal_timer/tim6-psc-arr-config.png)
+![定时器定时时间计算](/images/stm32_hal_timer/tim6-timing-calc.png)
 - 查手册可以知道，除了高级控制定时器，剩下的定时器时钟源来自APB1时钟
-- ![[Pasted image 20260825101405.png]]
+![APB1 时钟（手册）](/images/stm32_hal_timer/apb1-clock-manual.png)
 - 我们配置的是TIM6，所以要找APB2 timer clocks
-- ![[Pasted image 20260825101507.png]]
+![APB2 Timer Clocks](/images/stm32_hal_timer/apb2-timer-clocks.png)
 - 那么公式是 定时频率 = (自动重载值+1)/（时钟源/(预分频器值+1))
 - 即(写方便观看的公式
 - 那么 1ms需要1000Hz的频率，设置好PSC和ARR配置就好了
@@ -114,12 +116,12 @@ SET_BIT(RCC->APB1ENR, RCC_APB1ENR_TIM6EN);
 #define RCC                 ((RCC_TypeDef *) RCC_BASE)
 ```
 - 下面解析一下SET_BIT干了什么，RCC是一个结构体指针，指向RCC_BASE，其中的成员APB1ENR被拿来和RCC_APB1ENR_TIM6EN做或运算，其实就是和1<<4做或运算
-![[Pasted image 20260825130452.png]]
+![SET_BIT 宏解析](/images/stm32_hal_timer/set-bit-macro.png)
 
 - 由手册中RCC_APB1ENR可见，该或运算就是把寄存器第4位TIM6EN置1，即开启tim6的时钟
-![[Pasted image 20260825131210.png]]
+![RCC_APB1ENR 寄存器](/images/stm32_hal_timer/rcc-apb1enr-register.png)
 
-![[Pasted image 20260825131646.png]]
+![RCC_APB1ENR TIM6EN 位](/images/stm32_hal_timer/rcc-apb1enr-tim6en-bit.png)
 
 #### Set TIM state
 ```c
