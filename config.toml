@@ -1,6 +1,6 @@
 baseURL = "https://icey-air.github.io/"
 languageCode = "zh-cn"
-title = "Icye's blog"
+title = "Icey's blog"
 theme = "hugo-theme-stack"
 
 # 简体中文界面 + 中日韩分词统计
